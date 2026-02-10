@@ -116,6 +116,29 @@ You must ONLY produce the required three sections and nothing else.
 """
 
 
+# ---- CENTRALIZED AI CALL ----
+def get_feedback(player_input, sample_solution):
+    """
+    Centralized function for server or other scripts to get AI feedback.
+    """
+    prompt = build_prompt(player_input, sample_solution)
+
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": "You are a middle school Python teacher."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.2,
+            max_tokens=50,
+        )
+        feedback = response.choices[0].message.content.strip()
+    except Exception as e:
+        feedback = f"(AI Error: {e})"
+    return feedback
+
+
 # ---- MAIN EVALUATION ----
 def run_evaluator():
     print("Reading input files...")
